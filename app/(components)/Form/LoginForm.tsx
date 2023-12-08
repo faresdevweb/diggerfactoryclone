@@ -1,25 +1,27 @@
 "use client";
-import { useState, useRef } from "react";
-import { register } from "@/app/(components)/Form/action";
+import { useRef, useState } from "react";
+import { signIn } from "next-auth/react";
 
-interface RegisterFormProps {
+interface LoginFormProps {
   showForm: boolean;
   setShowForm: (showForm: boolean) => void;
 }
 
-const RegisterForm: React.FC<RegisterFormProps> = ({
-  showForm,
-  setShowForm,
-}) => {
-  const [error, setError] = useState<string | null>(null);
+const LoginForm: React.FC<LoginFormProps> = ({ showForm, setShowForm }) => {
   const formRef = useRef<HTMLFormElement>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(formRef.current as HTMLFormElement);
 
     try {
-      await register(formData);
+      await signIn("credentials", {
+        redirect: true,
+        callbackUrl: "/home",
+        email: formData.get("email") as string,
+        password: formData.get("password") as string,
+      });
       formRef.current?.reset();
     } catch (error: any) {
       setError(error.message);
@@ -28,7 +30,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
 
   return (
     <div className="flex flex-col justify-center items-center h-screen">
-      <h1 className="text-start text-4xl font-bold">Register</h1>
+      <h1 className="text-start text-4xl font-bold">Log In</h1>
       <form
         className="p-5 w-1/2 text-center"
         onSubmit={handleSubmit}
@@ -46,17 +48,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           />
         </div>
         <div className="flex flex-col p-3">
-          <label htmlFor="username" className="mb-3">
-            Username
-          </label>
-          <input
-            type="text"
-            name="username"
-            id="username"
-            className="border border-gray-500 py-2 px-3 w-1/2 rounded-lg mx-auto"
-          />
-        </div>
-        <div className="flex flex-col p-3">
           <label htmlFor="password" className="mb-3">
             Password
           </label>
@@ -67,31 +58,20 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             className="border border-gray-500 py-2 px-3 w-1/2 rounded-lg mx-auto"
           />
         </div>
-        <div className="flex flex-col p-3">
-          <label htmlFor="passwordConfirmation" className="mb-3">
-            Password Confirmation
-          </label>
-          <input
-            type="password"
-            name="passwordConfirmation"
-            id="passwordConfirmation"
-            className="border border-gray-500 py-2 px-3 w-1/2 rounded-lg mx-auto"
-          />
-        </div>
         <button
           type="submit"
           className="border border-gray-500 font-bold rounded-lg py-2 px-3 w-1/2 mx-auto mt-5 
-            hover:bg-gray-500 hover:text-white transition duration-300 ease-in-out"
+        hover:bg-gray-500 hover:text-white transition duration-300 ease-in-out"
         >
           Register
         </button>
-        <div className="flex justify-center items-center gap-4 mt-5">
-          <p className="">Already have an account ? </p>
+        <div className="flex justify-center mt-5 gap-4 items-center">
+          <p>Not Member yet ? </p>
           <p
             className="text-blue-500 hover:text-blue-700 cursor-pointer"
             onClick={() => setShowForm(!showForm)}
           >
-            Login
+            Register
           </p>
         </div>
         {error && (
@@ -104,4 +84,4 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
   );
 };
 
-export default RegisterForm;
+export default LoginForm;

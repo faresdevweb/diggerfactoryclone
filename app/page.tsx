@@ -1,20 +1,17 @@
-import { RegisterForm } from "./(components)";
-import { prisma } from "@/db/prisma";
+"use client";
+import { RegisterForm, LoginForm } from "./(components)";
+import { useState } from "react";
 
 const Home = () => {
-  const getUser = async () => {
-    "use server";
-    const data = await prisma.user.findMany({});
-    if (data.length === 0) {
-      console.log("No users found");
-    } else {
-      console.log(data);
-    }
-  };
+  const [showForm, setShowForm] = useState<boolean>(false);
 
   return (
     <div>
-      <RegisterForm />
+      {showForm ? (
+        <LoginForm showForm={showForm} setShowForm={setShowForm} />
+      ) : (
+        <RegisterForm showForm={showForm} setShowForm={setShowForm} />
+      )}
     </div>
   );
 };

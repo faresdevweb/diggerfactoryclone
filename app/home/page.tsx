@@ -1,9 +1,10 @@
 import { getServerSession } from "next-auth";
 import { options } from "../api/auth/[...nextauth]/options";
-import { redirect } from "next/navigation";
 
 const Main = async () => {
   const session = await getServerSession(options);
+
+  console.log("session", session);
 
   if (!session) {
     return <div className="text-center text-4xl">Not logged in</div>;

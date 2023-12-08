@@ -61,12 +61,6 @@ export const options: NextAuthOptions = {
         return session;
       }
       return { ...session, user: token };
-    },
-    async signIn({ user, account, profile, email, credentials }) {
-      if (user) {
-        return '/home';
-      }
-      return '/auth/signin';
-    },
+    }
   },
 };
